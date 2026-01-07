@@ -1,54 +1,76 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Access Code (48h)</title>
+<meta charset="UTF-8">
+<title>Get Access Key</title>
 <style>
-body{
-  font-family:Arial;
-  background:#0f0f0f;
-  color:#eee;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  height:100vh;
-}
-.box{
-  background:#1b1b1b;
-  padding:24px;
-  border-radius:12px;
-  width:360px;
-}
-button{
-  width:100%;
-  padding:12px;
-  margin-top:12px;
-  font-size:16px;
-}
-code{
-  display:block;
-  margin-top:12px;
-  background:#000;
-  padding:10px;
-  word-break:break-all;
-}
+	body {
+		background:#0f0f0f;
+		color:white;
+		font-family:Arial;
+		display:flex;
+		justify-content:center;
+		align-items:center;
+		height:100vh;
+	}
+	.box {
+		background:#181818;
+		padding:25px;
+		border-radius:8px;
+		width:320px;
+		text-align:center;
+	}
+	button {
+		width:100%;
+		padding:12px;
+		margin-top:10px;
+		background:#4caf50;
+		border:none;
+		color:white;
+		font-size:16px;
+		cursor:pointer;
+	}
+	#key {
+		margin-top:15px;
+		font-size:15px;
+		word-break:break-all;
+		color:#9cff9c;
+	}
 </style>
 </head>
 <body>
+
 <div class="box">
-<h3>Код доступа (48 часов)</h3>
-<p>Нажмите кнопку, чтобы получить код.</p>
-<button onclick="gen()">Получить код</button>
-<code id="out">—</code>
+	<h2>Access Key</h2>
+	<button onclick="generate()">GET KEY</button>
+	<div id="key"></div>
+</div>
 
 <script>
-function gen(){
-  const now = Math.floor(Date.now()/1000);
-  const rand = Math.random().toString(36).slice(2,6).toUpperCase();
-  document.getElementById("out").innerText =
-    "LL-" + now + "-" + rand;
+function r(len){
+	const c="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+	let o="";
+	for(let i=0;i<len;i++) o+=c[Math.floor(Math.random()*c.length)];
+	return o;
+}
+
+function generate(){
+	const formats=[
+		()=>`LL-${Date.now()}-${r(4)}`,
+		()=>`${r(2)}-${Date.now().toString(36)}-${r(4)}`,
+		()=>`${r(3)}-${r(5)}-${Date.now().toString(36)}`,
+		()=>`${r(4)}-${Date.now()}-${r(2)}${r(2)}`
+	];
+	const key=formats[Math.floor(Math.random()*formats.length)]();
+
+	// ❌ предыдущий ключ убивается навсегда
+	const last=localStorage.getItem("lastKey");
+	if(last) localStorage.setItem("used_"+last,"1");
+
+	localStorage.setItem("lastKey",key);
+	document.getElementById("key").innerText=key;
 }
 </script>
-</div>
+
 </body>
 </html>
